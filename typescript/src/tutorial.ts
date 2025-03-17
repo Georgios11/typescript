@@ -876,9 +876,295 @@ namespace TypeNever {
 	console.log(getColorName(Color.Red));
 	console.log(getColorName(Color.Green));
 }
-// Modules - Intro
+// ++++++++++ Type Guards - Typeof
+
+// Challenge - "typeof" guard
+namespace TypeGuards {
+	/**
+	 Define the function checkValue that takes one parameter value of type ValueType.
+Inside the function, use an if statement to check if value is of type string. If it is, log value converted to lowercase and then return from the function.
+If value is not a string, use another if statement to check if value is of type number. If it is, log value formatted to two decimal places and then return from the function.
+If value is neither a string nor a number, it must be a boolean. Log the string "boolean: " followed by the boolean value.
+Finally, call the checkValue function with value as the argument.
+	 */
+	type ValueType = string | number | boolean;
+
+	let value: ValueType;
+	const random = Math.random();
+	value = random < 0.33 ? 'Hello' : random < 0.66 ? 123.456 : true;
+
+	function checkValue(param: ValueType) {
+		if (typeof param === 'string') {
+			console.log(param.toLowerCase());
+			return;
+		} else if (typeof param === 'number') {
+			console.log(param.toFixed(2));
+			return;
+		} else {
+			console.log(`boolean ${param}`);
+		}
+	}
+	checkValue(value);
+
+	// Challenge - Equality Narrowing
+
+	/**
+	 In TypeScript, equality narrowing is a form of type narrowing that occurs when you use equality checks like === or !== in your code
+	 */
+	/**
+	 Define a function named makeSound that takes one parameter animal of type Animal.
+Inside the function, use an if statement to check if animal.type is 'dog'.
+If animal.type is 'dog', TypeScript knows that animal is a Dog in this block. In this case, call the bark method of animal.
+If animal.type is not 'dog', TypeScript knows that animal is a Cat in the else block. In this case, call the meow method of animal.
+Now you can call the makeSound function with an Animal as the argument. The function will call the appropriate method (bark or meow) depending on the type of the animal.
+	 */
+	type Dog = { type: 'dog'; name: string; bark: () => void };
+	type Cat = { type: 'cat'; name: string; meow: () => void };
+	type Animal = Dog | Cat;
+
+	function makeSound(param: Animal) {
+		if (param.type === 'dog') {
+			param.bark();
+		} else {
+			param.meow();
+		}
+	}
+	// Challenge - check for property
+	/**
+	 * The "in" operator in TypeScript is used to narrow down the type of a variable when used in a conditional statement.
+	 * It checks if a property or method exists on an object. If it exists, TypeScript will narrow the type to the one
+	 * that has this property.
+	 */
+
+	/**
+	 * Define a function named makeSound that takes one parameter animal of type Animal.
+	 * Inside the function, use an if statement with the in operator to check if the bark method exists on the animal object.
+	 * If the bark method exists on animal, TypeScript knows that animal is a Dog in this block. In this case, call the bark method of animal.
+	 * If the bark method does not exist on animal, TypeScript knows that animal is a Cat in the else block. In this case, call the meow method of animal.
+	 * Now you can call the makeSound function with an Animal as the argument. The function will call the appropriate method (bark or meow) depending on the type of the animal.
+	 */
+	function makeSound1(param: Animal) {
+		if ('bark' in param) {
+			param.bark();
+		} else {
+			param.meow();
+		}
+	}
+	let cat: Animal = {
+		type: 'cat',
+		name: 'rex',
+		meow: function () {
+			console.log('meow');
+		},
+	};
+	makeSound1(cat);
+	// Challenge - "Truthy"/"Falsy" guard
+
+	/**
+	 In TypeScript, "Truthy"/"Falsy" guard is a simple check for a truthy or falsy value
+
+Define a function named printLength that takes one parameter str which can be of type string, null, or undefined.
+
+Inside the function, use an if statement to check if str is truthy. In JavaScript and TypeScript, a truthy value is a value that is considered true when encountered in a Boolean context. All values are truthy unless they are defined as falsy (i.e., except for false, 0, -0, 0n, "", null, undefined, and NaN).
+
+If str is truthy, it means it's a string (since null and undefined are falsy). In this case, log the length of str using the length property of the string.
+
+If str is not truthy (i.e., it's either null or undefined), log the string 'No string provided'.
+
+Now you can call the printLength function with a string, null, or undefined as the argument. The function will print the length of the string if a string is provided, or 'No string provided' otherwise.
+	 */
+
+	function printLength(param: string | undefined | null): void {
+		if (param) {
+			console.log(param.length);
+		} else {
+			console.log('no string provided');
+		}
+	}
+	printLength('PAOK');
+	printLength(undefined);
+	printLength(null);
+
+	// Challenge - "instanceof" type guard
+	/**
+	 The instanceof type guard is a way in TypeScript to check the specific class or constructor function of an object at runtime. It returns true if the object is an instance of the class or created by the constructor function, and false otherwise.
+	 */
+
+	/**
+	  Start by defining the function using the function keyword followed by the function name, in this case checkInput.
+Define the function's parameter. The function takes one parameter, input, which can be of type Date or string. This is denoted by input: Date | string.
+Inside the function, use an if statement to check if the input is an instance of Date. This is done using the instanceof operator.
+If the input is an instance of Date, return the year part of the date as a string. This is done by calling the getFullYear method on the input and then converting it to a string using the toString method.
+If the input is not an instance of Date (which means it must be a string), return the input as it is.
+After defining the function, you can use it by calling it with either a Date or a string as the argument. The function will return the year part of the date if a Date is passed, or the original string if a string is passed.
+You can store the return value of the function in a variable and then log it to the console to see the result.
+	  */
+
+	function checkInput(param: Date | string): string {
+		if (param instanceof Date) {
+			return param.getFullYear().toString();
+		} else {
+			return param;
+		}
+	}
+	let year = checkInput(new Date());
+	console.log(year);
+	let team = checkInput('PAOK');
+	console.log(team);
+
+	// Challenge - Type Predicate
+	/**
+	 A type predicate is a function whose return type is a special kind of type that can be used to narrow down types within conditional blocks.
+	 */
+	type Student = {
+		name: string;
+		study: () => void;
+	};
+
+	type User = {
+		name: string;
+		login: () => void;
+	};
+
+	type Person = Student | User;
+
+	const randomPerson = (): Person => {
+		return Math.random() > 0.5
+			? { name: 'john', study: () => console.log('Studying') }
+			: { name: 'mary', login: () => console.log('Logging in') };
+	};
+
+	const person = randomPerson();
+	console.log(person);
+
+	function isStudent(person: Person): person is Student {
+		return 'study' in person;
+		// return (person as Student).study !== undefined;
+	}
+	console.log(isStudent(person));
+	if (isStudent(person)) {
+		person.study();
+	} else {
+		person.login();
+	}
+	// Challenge - Discriminated Unions and exhaustive check using the never type
+	/**
+	 A discriminated union in TypeScript is a type that can be one of several different types, each identified by a unique literal property (the discriminator), allowing for type-safe handling of each possible variant.
+	 */
+
+	// starter code
+	type IncrementAction = {
+		type: 'increment';
+		amount: number;
+		timestamp: number;
+		user: string;
+	};
+
+	type DecrementAction = {
+		type: 'decrement';
+		amount: number;
+		timestamp: number;
+		user: string;
+	};
+
+	type Action = IncrementAction | DecrementAction;
+
+	function reducer(state: number, action: Action): number {
+		switch (action.type) {
+			case 'increment':
+				return (state += action.amount);
+			case 'decrement':
+				return (state -= action.amount);
+
+			default:
+				const unexpectedAction: never = action;
+				throw new Error(`Unexpected action : ${unexpectedAction}`);
+		}
+	}
+
+	const newState = reducer(15, {
+		user: 'john',
+		type: 'increment',
+		amount: 5,
+		timestamp: 123,
+	});
+}
+
+// Generics - Fundamentals
 
 /**
- If your TypeScript files aren't modules (i.e., they don't have any import or export statements), they're treated as scripts in the global scope. In this case, declaring the same variable in two different files would cause a conflict.
+ Generics in TypeScript are a way to create reusable code components that work with a variety of types as opposed to a single one.
+
+In other words, generics allow you to write a function or a class that can work with any data type. You can think of generics as a kind of variable for types.
  */
-namespace Modules {}
+namespace Generics {
+	// In TypeScript, you can declare an array using two syntaxes:
+	// let array1: string[] = ['Apple', 'Banana', 'Mango'];
+	// let array2: number[] = [1, 2, 3];
+	// let array3: boolean[] = [true, false, true];
+	let array1: Array<string> = ['Apple', 'Banana'];
+
+	// Generics - Create Generic Function and Interface
+
+	/**
+	  
+	function createString(arg: string): string {
+		return arg;
+	}
+	function createNumber(arg: number): number {
+		return arg;
+	}
+	*/
+	function genericFunction<T>(arg: T): T {
+		return arg;
+	}
+	const someString = genericFunction<string>('hi');
+	const someNumber = genericFunction<number>(4);
+	console.log(someString);
+	console.log(someNumber);
+
+	interface GenericInterface<T> {
+		value: T;
+		getValue: () => T;
+	}
+	const genericString: GenericInterface<string> = {
+		value: 'Hi',
+		getValue() {
+			return this.value;
+		},
+	};
+
+	//Generics - Promise Example
+	async function someFunc(): Promise<string> {
+		return 'Hello';
+	}
+
+	const result = someFunc();
+
+	// Generics - Generate Array
+
+	function generateStringArray(length: number, value: string): string[] {
+		let result: string[] = [];
+		result = Array(length).fill(value);
+		return result;
+	}
+	const arr = generateStringArray(4, 'PAOK');
+	console.log(arr);
+
+	function createArray<T>(length: number, value: T): Array<T> {
+		let result: T[] = [];
+		result = Array(length).fill(value);
+		return result;
+	}
+	let arrayStrings = createArray(3, 'PAOK');
+	let arrayNumbers = createArray(4, 4);
+	console.log(arrayNumbers);
+	console.log(arrayStrings);
+
+	// Generics - Multiple Types
+	function pair<T, U>(param1: T, param2: U): [T, U] {
+		return [param1, param2];
+	}
+	let result2 = pair<number, string>(4, 'PAOK');
+	console.log(result2);
+}
