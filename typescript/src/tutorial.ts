@@ -7,7 +7,7 @@ console.log(awesomeName);
 let amount = 3;
 amount = 3 - 4;
 console.log(amount);
-
+import { z } from 'zod';
 // Type Inference
 // let name1 = "PAOK";
 
@@ -1167,4 +1167,154 @@ namespace Generics {
 	}
 	let result2 = pair<number, string>(4, 'PAOK');
 	console.log(result2);
+
+	let res = pair(2, 2);
+	console.log(res);
+
+	// Generics - Type  constraints
+	function processValue<T extends string | number>(value: T): T {
+		console.log(value);
+		return value;
+	}
+	processValue('PAOK');
+	processValue(3);
+	// Generics - Type  constraints SECOND EXAMPLE
+	type Car = {
+		brand: string;
+		model: string;
+	};
+
+	const car: Car = {
+		brand: 'ford',
+		model: 'mustang',
+	};
+
+	type Product = {
+		name: string;
+		price: number;
+	};
+
+	const product: Product = {
+		name: 'shoes',
+		price: 1.99,
+	};
+
+	type Student = {
+		name: string;
+		age: number;
+	};
+
+	const student: Student = {
+		name: 'peter',
+		age: 20,
+	};
+	/**
+ T extends Student is a type constraint on the generic type T. It means that the type T can be any type, but it must be a subtype of Student or Student itself. In other words, T must have at least the same properties and methods that Student has.
+ */
+	function printName<T extends Student | Product>(input: T): void {
+		console.log(input.name);
+	}
+	printName(student);
+	printName(product);
+
+	/*
+	The extends { name: string } part is a type constraint on T. It means that T can be any type, but it must be an object that has at least a name property of type string.
+In other words, T must have at least the same properties and methods that { name: string } has.
+	*/
+	function printName2<T extends { name: string }>(input: T): void {
+		console.log(input.name);
+	}
+	printName2(product);
+	printName2(student);
+	printName2(car);
+
+	// Generics - Default Value
+	interface StoreData<T> {
+		data: T[];
+	}
+	const storeNumbers: StoreData<number> = {
+		data: [1, 2, 3],
+	};
+	const randomStuff: StoreData<any> = {
+		data: ['random', 1],
+	};
 }
+// ++++++++++ Fetch data
+namespace FetchData {
+	const url: string = 'https://www.course-api.com/react-tours-project';
+	// Basics
+	type Tour = {
+		id: string;
+		name: string;
+		info: string;
+		image: string;
+		price: string;
+	};
+	async function fetchData(url: string): Promise<Tour[]> {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			const data: Tour[] = await response.json();
+			return data;
+		} catch (error) {
+			const errMsg =
+				error instanceof Error
+					? error.message
+					: 'There was an error...';
+			console.log(errMsg);
+			return [];
+		}
+	}
+	async function getTours() {
+		const tours = await fetchData(url);
+		console.log('Tours data:', tours);
+		tours.forEach((tour) => console.log(tour.image));
+		return tours;
+	}
+
+	getTours();
+
+	// ZOD LIBRARY
+	namespace ZOD {
+		// import z
+		// construct schema
+		const tourSchema = z.object({
+			id: z.string(),
+			name: z.string(),
+			info: z.string(),
+			image: z.string(),
+			price: z.string(),
+			//zod checks for errors at build time
+			// some: z.boolean(),
+		});
+		type Tour = z.infer<typeof tourSchema>;
+
+		async function fetchData2(url: string): Promise<Tour[]> {
+			try {
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const rawData: Tour[] = await response.json();
+				const result = tourSchema.array().safeParse(rawData);
+				console.log(result);
+				if (!result.success) {
+					throw new Error(`Invalid data: ${result.error}`);
+				}
+				return result.data;
+			} catch (error) {
+				const errMsg =
+					error instanceof Error
+						? error.message
+						: 'There was an error...';
+				console.log(errMsg);
+				return [];
+			}
+		}
+		fetchData2(url);
+	}
+}
+
+namespace DeclarationFiles {}
