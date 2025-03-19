@@ -3,16 +3,21 @@
 // import Component from "./starter/03-state";
 // import Component from "./starter/04-events";
 // import Component from "../../typescript-course-main/02-typescript-react-essentials/src/final/05-challenge";
-import Challenge from "./Challenge";
+// import Challenge from "./Challenge";
+import Component from "./starter/08-fetch-data";
 function App() {
 	return (
 		<main>
-			<Challenge type="basic" name="Tsitsikaki" />
+			<Component />
+			{
+				//challenge solved
+				/* <Challenge type="basic" name="Tsitsikaki" />
 			<Challenge
 				type="advanced"
 				name="Tsitsikaki"
 				email="tsitsiki@email.com"
-			/>
+			/> */
+			}
 			{
 				//challenge example
 				/* <Component type="basic" name="geo" />
