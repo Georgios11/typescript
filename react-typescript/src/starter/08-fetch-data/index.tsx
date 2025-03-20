@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
+import { Tour, tourSchema } from "./types";
 function Component() {
 	const url: string = "https://www.course-api.com/react-tours-project";
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState<string | null>(null);
-	const [tours, setTours] = useState([]);
+	const [tours, setTours] = useState<Tour[]>([]);
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
@@ -14,9 +15,14 @@ function Component() {
 				if (!response.ok) {
 					throw new Error(`Failed to fetch data...`);
 				}
-				const rawData = await response.json();
-				setTours(rawData);
-				console.log(rawData);
+				const rawData: Tour[] = await response.json();
+				const result = tourSchema.array().safeParse(rawData);
+
+				if (!result.success) {
+					console.log(result.error.message);
+					throw new Error(`Failed to parse tours`);
+				}
+				setTours(result.data);
 			} catch (error) {
 				const message =
 					error instanceof Error
@@ -40,9 +46,17 @@ function Component() {
 	return (
 		<div>
 			<h2>React & Typescript</h2>
-			{tours.map((tour) => {
-				return <h2>{tour.name}</h2>;
-			})}
+
+			<div>
+				<h2 className="mb-1">Tours</h2>
+				{tours.map((tour: Tour) => {
+					return (
+						<p key={tour.id} className="mb-1">
+							{tour.name}
+						</p>
+					);
+				})}
+			</div>
 		</div>
 	);
 }
